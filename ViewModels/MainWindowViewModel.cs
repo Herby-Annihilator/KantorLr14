@@ -37,14 +37,45 @@ namespace KantorLr14.ViewModels
 		public string Teta { get => _teta; set => Set(ref _teta, value); }
 
 		private string _left = "";
-		public string Left { get => _left; set => Set(ref _left, value); }
+		public string Left 
+		{ 
+			get => _left;
+			set
+			{
+				YTextBlock = $"U({value}) = ";
+				Set(ref _left, value);
+			}
+		}
 
 		private string _right = "";
-		public string Right { get => _right; set => Set(ref _right, value); }
+		public string Right 
+		{ 
+			get => _right;
+			set
+			{
+				DyTextBlock = $"U'({value}) = ";
+				Set(ref _right, value);
+			}
+		}
+
+		private string _precision = "";
+		public string Precision { get => _precision; set => Set(ref _precision, value); }
+
+		private string _y = "";
+		public string Y { get => _y; set => Set(ref _y, value); }
+
+		private string _yTextBlock = "U() = ";
+		public string YTextBlock { get => _yTextBlock; set => Set(ref _yTextBlock, value); }
+
+		private string _dy = "";
+		public string Dy { get => _dy; set => Set(ref _dy, value); }
+
+		private string _dyTextBlock = "U'() = ";
+		public string DyTextBlock { get => _dyTextBlock; set => Set(ref _dyTextBlock, value); }
 		#endregion
 
 		#region Commands
-		
+
 		#region CalculateCommand
 		public ICommand CalculateCommand { get; }
 		private void OnCalculateCommandExecuted(object p)
@@ -55,7 +86,11 @@ namespace KantorLr14.ViewModels
 				double beta = Convert.ToDouble(Beta.Replace('.', ','));
 				double ro = Convert.ToDouble(Ro.Replace('.', ','));
 				double teta = Convert.ToDouble(Teta.Replace('.', ','));
-				
+				double leftR = Convert.ToDouble(Left.Replace('.', ','));
+				double rightR = Convert.ToDouble(Right.Replace('.', ','));
+				double precision = Convert.ToDouble(Precision.Replace('.', ','));
+				RungeKuttaMethod rungeKuttaMethod = new RungeKuttaMethod();
+
 				Status = "Успешный расчет";
 			}
 			catch(Exception e)

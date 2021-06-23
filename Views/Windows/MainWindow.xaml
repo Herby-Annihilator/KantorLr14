@@ -79,6 +79,18 @@
                         <TextBlock Text="До" Margin="10,0"/>
                         <TextBox Margin="5,0" Width="75" Text="{Binding Right, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <TextBlock Text="{Binding YTextBlock}"/>
+                        <TextBox Width="100" Text="{Binding Y, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <TextBlock Text="{Binding DyTextBlock}"/>
+                        <TextBox Width="100" Text="{Binding Dy, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <TextBlock Text="Точность = "/>
+                        <TextBox Width="100" Text="{Binding Precision, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
                     <UniformGrid Rows="2">
                         <UniformGrid.Resources>
                             <Style TargetType="Button">
