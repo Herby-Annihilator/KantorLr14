@@ -67,17 +67,17 @@
                         <TextBlock Grid.Column="0" Grid.Row="2" Text="ρ = "/>
                         <TextBlock Grid.Column="0" Grid.Row="3" Text="θ = "/>
 
-                        <TextBox Grid.Column="1" Grid.Row="0"/>
-                        <TextBox Grid.Column="1" Grid.Row="1"/>
-                        <TextBox Grid.Column="1" Grid.Row="2"/>
-                        <TextBox Grid.Column="1" Grid.Row="3"/>
+                        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Alpha, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Beta, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Ro, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Teta, UpdateSourceTrigger=PropertyChanged}"/>
                     </Grid>
                     <TextBlock Text="Границы изменения R" HorizontalAlignment="Center" Margin="5"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
                         <TextBlock Text="От"/>
-                        <TextBox Margin="5,0" Width="75"/>
+                        <TextBox Margin="5,0" Width="75" Text="{Binding Left, UpdateSourceTrigger=PropertyChanged}"/>
                         <TextBlock Text="До" Margin="10,0"/>
-                        <TextBox Margin="5,0" Width="75"/>
+                        <TextBox Margin="5,0" Width="75" Text="{Binding Right, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
                     <UniformGrid Rows="2">
                         <UniformGrid.Resources>
@@ -85,7 +85,7 @@
                                 <Setter Property="Margin" Value="5"/>
                             </Style>
                         </UniformGrid.Resources>
-                        <Button Content="Расчитать"/>
+                        <Button Content="Расчитать" Command="{Binding CalculateCommand}"/>
                         <Button Content="Показать"/>
                         <Button Content="Убрать"/>
                     </UniformGrid>
