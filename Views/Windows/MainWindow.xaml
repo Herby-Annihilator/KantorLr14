@@ -98,15 +98,15 @@
                             </Style>
                         </UniformGrid.Resources>
                         <Button Content="Расчитать" Command="{Binding CalculateCommand}"/>
-                        <Button Content="Показать"/>
-                        <Button Content="Убрать"/>
+                        <Button Content="Показать" Command="{Binding ShowCommand}"/>
+                        <Button Content="Убрать" Command="{Binding ClearCommand}"/>
                     </UniformGrid>
                 </StackPanel>
-                <DataGrid>
+                <DataGrid ItemsSource="{Binding Table}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="x" Width="60"/>
-                        <DataGridTextColumn Header="y" Width="100"/>
-                        <DataGridTextColumn Header="y'" Width="100"/>
+                        <DataGridTextColumn Header="R" Width="60" Binding="{Binding Argument}"/>
+                        <DataGridTextColumn Header="U" Width="100" Binding="{Binding FunctionValue}"/>
+                        <DataGridTextColumn Header="U'" Width="100" Binding="{Binding DerivativeValue}"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </DockPanel>
@@ -115,6 +115,16 @@
                     <oxy:LinearAxis Position="Left" MajorGridlineStyle="Dot" MajorGridlineColor="LightGray"/>
                     <oxy:LinearAxis Position="Bottom" MajorGridlineStyle="Dot" MajorGridlineColor="LightGray"/>
                 </oxy:Plot.Axes>
+                <oxy:LineSeries ItemsSource="{Binding YFunction}"
+                                DataFieldX="X"
+                                DataFieldY="Y"
+                                Color="Red"
+                                Title="Функция"/>
+                <oxy:LineSeries ItemsSource="{Binding VFunction}"
+                                DataFieldX="X"
+                                DataFieldY="Y"
+                                Color="BlueViolet"
+                                Title="Производная"/>
             </oxy:Plot>
         </Grid>
     </DockPanel>

@@ -7,6 +7,9 @@ using System.Windows.Input;
 using System.Windows.Markup;
 using CompMathLibrary.KoshiTask.RungeKutt;
 using KantorLr14.Models.Function;
+using CompMathLibrary.Data;
+using System.Collections.ObjectModel;
+using KantorLr14.Models.Data;
 
 namespace KantorLr14.ViewModels
 {
@@ -16,6 +19,8 @@ namespace KantorLr14.ViewModels
 		public MainWindowViewModel()
 		{
 			CalculateCommand = new LambdaCommand(OnCalculateCommandExecuted, CanCalculateCommandExecute);
+			ShowCommand = new LambdaCommand(OnShowCommandExecuted, CanShowCommandExecute);
+			ClearCommand = new LambdaCommand(OnClearCommandExecuted, CanClearCommandExecute);
 		}
 		#region Properties
 		private string _title = "Title";
@@ -72,6 +77,12 @@ namespace KantorLr14.ViewModels
 
 		private string _dyTextBlock = "U'() = ";
 		public string DyTextBlock { get => _dyTextBlock; set => Set(ref _dyTextBlock, value); }
+
+		private List<Point>[] answer;
+		public ObservableCollection<Point> YFunction { get; private set; } = new ObservableCollection<Point>();
+		public ObservableCollection<Point> VFunction { get; private set; } = new ObservableCollection<Point>();
+		public ObservableCollection<ArgumentFunctionDerivative> Table { get; private set; } = new ObservableCollection<ArgumentFunctionDerivative>();
+
 		#endregion
 
 		#region Commands
@@ -89,8 +100,16 @@ namespace KantorLr14.ViewModels
 				double leftR = Convert.ToDouble(Left.Replace('.', ','));
 				double rightR = Convert.ToDouble(Right.Replace('.', ','));
 				double precision = Convert.ToDouble(Precision.Replace('.', ','));
+				double dy = Convert.ToDouble(Dy.Replace('.', ','));
+				double y = Convert.ToDouble(Y.Replace('.', ','));
+				double currentDy = double.MaxValue;
 				RungeKuttaMethod rungeKuttaMethod = new RungeKuttaMethod();
+				GlobalVectorDerivativeFunction f = GetFunction(alpha, beta, ro, teta);
+				List<Point>[] functionsPoints;
+				while (Math.Abs(currentDy - dy) > precision)
+				{
 
+				}
 				Status = "Успешный расчет";
 			}
 			catch(Exception e)
@@ -101,10 +120,46 @@ namespace KantorLr14.ViewModels
 		private bool CanCalculateCommandExecute(object p) => !(string.IsNullOrWhiteSpace(Left) || string.IsNullOrWhiteSpace(Right) || string.IsNullOrWhiteSpace(Alpha) || string.IsNullOrWhiteSpace(Beta) || string.IsNullOrWhiteSpace(Ro) || string.IsNullOrWhiteSpace(Teta));
 		#endregion
 
+		#region ShowCommand
+		public ICommand ShowCommand { get; }
+		private void OnShowCommandExecuted(object p)
+		{
+			try
+			{
+				
+				Status = "Данные выведены";
+			}
+			catch (Exception e)
+			{
+				Status = $"Неудача, причина: {e.Message}";
+			}
+		}
+		private bool CanShowCommandExecute(object p) => answer != null && answer.Length > 0;
+		#endregion
+
+		#region ClearCommand
+		public ICommand ClearCommand { get; }
+		private void OnClearCommandExecuted(object p)
+		{
+			try
+			{
+				Table.Clear();
+				YFunction.Clear();
+				VFunction.Clear();
+				Status = "Данные не отображаются";
+			}
+			catch (Exception e)
+			{
+				Status = $"Неудача, причина: {e.Message}";
+			}
+		}
+		private bool CanClearCommandExecute(object p) => Table.Count > 0 || YFunction.Count > 0 || VFunction.Count > 0;
+		#endregion
+
 		#endregion
 
 		#region Methods
-		private GlobalVectorDerivativeFunction GetFunction(double alpha, double beta, double ro, double teta, double r)
+		private GlobalVectorDerivativeFunction GetFunction(double alpha, double beta, double ro, double teta)
 		{
 			YDerivative y = new YDerivative();
 			VDerivative v = new VDerivative(alpha, beta, ro, teta);
