@@ -10,6 +10,7 @@ using KantorLr14.Models.Function;
 using CompMathLibrary.Data;
 using System.Collections.ObjectModel;
 using KantorLr14.Models.Data;
+using CompMathLibrary.Vectors;
 
 namespace KantorLr14.ViewModels
 {
@@ -48,6 +49,7 @@ namespace KantorLr14.ViewModels
 			set
 			{
 				YTextBlock = $"U({value}) = ";
+				DyFromLeftTextBlock = $"U'({value})";
 				Set(ref _left, value);
 			}
 		}
@@ -58,13 +60,16 @@ namespace KantorLr14.ViewModels
 			get => _right;
 			set
 			{
-				DyTextBlock = $"U'({value}) = ";
+				DyTextBlock = $"U'({value}) = ";				
 				Set(ref _right, value);
 			}
 		}
 
 		private string _precision = "";
 		public string Precision { get => _precision; set => Set(ref _precision, value); }
+
+		private string _stepsCount = "";
+		public string StepsCount { get => _stepsCount; set => Set(ref _stepsCount, value); }
 
 		private string _y = "";
 		public string Y { get => _y; set => Set(ref _y, value); }
@@ -77,6 +82,15 @@ namespace KantorLr14.ViewModels
 
 		private string _dyTextBlock = "U'() = ";
 		public string DyTextBlock { get => _dyTextBlock; set => Set(ref _dyTextBlock, value); }
+
+		private string _dyFromLeftTextBlock = "U'()";
+		public string DyFromLeftTextBlock { get => _dyFromLeftTextBlock; set => Set(ref _dyFromLeftTextBlock, value); }
+
+		private string _minDyFromLeftTextBlock = "";
+		public string MinDyFromLeftTextBlock { get => _minDyFromLeftTextBlock; set => Set(ref _minDyFromLeftTextBlock, value); }
+
+		private string _maxDyFromLeftTextBlock = "";
+		public string MaxDyFromLeftTextBlock { get => _maxDyFromLeftTextBlock; set => Set(ref _maxDyFromLeftTextBlock, value); }
 
 		private List<Point>[] answer;
 		public ObservableCollection<Point> YFunction { get; private set; } = new ObservableCollection<Point>();
@@ -102,14 +116,52 @@ namespace KantorLr14.ViewModels
 				double precision = Convert.ToDouble(Precision.Replace('.', ','));
 				double dy = Convert.ToDouble(Dy.Replace('.', ','));
 				double y = Convert.ToDouble(Y.Replace('.', ','));
-				double currentDy = double.MaxValue;
+				double maxDy = Convert.ToDouble(MaxDyFromLeftTextBlock.Replace('.', ','));
+				double minDy = Convert.ToDouble(MinDyFromLeftTextBlock.Replace('.', ','));
+				int stepsCount = Convert.ToInt32(StepsCount.Replace('.', ','));
+				double leftDy = minDy;
+				double rightDy = maxDy;
+				double midDy = (rightDy + leftDy) / 2;
 				RungeKuttaMethod rungeKuttaMethod = new RungeKuttaMethod();
 				GlobalVectorDerivativeFunction f = GetFunction(alpha, beta, ro, teta);
-				List<Point>[] functionsPoints;
-				while (Math.Abs(currentDy - dy) > precision)
-				{
+				List<Point>[] functionsPointsLeft;
+				List<Point>[] functionsPointsRight;
+				List<Point>[] functionsPointsMiddle;
+				Vector functionsStartConditions = new Vector(2);
 
+				functionsStartConditions[0] = y;
+				functionsStartConditions[1] = leftDy;
+				functionsPointsLeft = rungeKuttaMethod.GetSystemSolution(f, leftR, rightR, functionsStartConditions, stepsCount);
+
+				functionsStartConditions[0] = y;
+				functionsStartConditions[1] = rightDy;
+				functionsPointsRight = rungeKuttaMethod.GetSystemSolution(f, leftR, rightR, functionsStartConditions, stepsCount);
+
+				functionsStartConditions[0] = y;
+				functionsStartConditions[1] = midDy;
+				functionsPointsMiddle = rungeKuttaMethod.GetSystemSolution(f, leftR, rightR, functionsStartConditions, stepsCount);
+
+				while (Math.Abs(functionsPointsMiddle[1][functionsPointsMiddle[1].Count - 1].Y - dy) > precision)
+				{
+					if (functionsPointsMiddle[1][functionsPointsMiddle[1].Count - 1].Y * functionsPointsLeft[1][functionsPointsLeft[1].Count - 1].Y < 0)
+						rightDy = midDy;
+					else
+						leftDy = midDy;
+					midDy = (leftDy + rightDy) / 2;
+
+					functionsStartConditions[0] = y;
+					functionsStartConditions[1] = leftDy;
+					functionsPointsLeft = rungeKuttaMethod.GetSystemSolution(f, leftR, rightR, functionsStartConditions, stepsCount);
+
+					functionsStartConditions[0] = y;
+					functionsStartConditions[1] = rightDy;
+					functionsPointsRight = rungeKuttaMethod.GetSystemSolution(f, leftR, rightR, functionsStartConditions, stepsCount);
+
+					functionsStartConditions[0] = y;
+					functionsStartConditions[1] = midDy;
+					functionsPointsMiddle = rungeKuttaMethod.GetSystemSolution(f, leftR, rightR, functionsStartConditions, stepsCount);
 				}
+				answer = functionsPointsMiddle;
 				Status = "Успешный расчет";
 			}
 			catch(Exception e)
@@ -117,7 +169,7 @@ namespace KantorLr14.ViewModels
 				Status = $"Неудача, причина: {e.Message}";
 			}
 		}
-		private bool CanCalculateCommandExecute(object p) => !(string.IsNullOrWhiteSpace(Left) || string.IsNullOrWhiteSpace(Right) || string.IsNullOrWhiteSpace(Alpha) || string.IsNullOrWhiteSpace(Beta) || string.IsNullOrWhiteSpace(Ro) || string.IsNullOrWhiteSpace(Teta));
+		private bool CanCalculateCommandExecute(object p) => !(string.IsNullOrWhiteSpace(Left) || string.IsNullOrWhiteSpace(Right) || string.IsNullOrWhiteSpace(Alpha) || string.IsNullOrWhiteSpace(Beta) || string.IsNullOrWhiteSpace(Ro) || string.IsNullOrWhiteSpace(Teta) || string.IsNullOrWhiteSpace(Y) || string.IsNullOrWhiteSpace(Dy) || string.IsNullOrWhiteSpace(MinDyFromLeftTextBlock) || string.IsNullOrWhiteSpace(MaxDyFromLeftTextBlock));
 		#endregion
 
 		#region ShowCommand
@@ -126,7 +178,24 @@ namespace KantorLr14.ViewModels
 		{
 			try
 			{
-				
+				for (int i = 0; i < answer.Length; i++)
+				{
+					if (i == 0)
+					{
+						for (int j = 0; j < answer[i].Count; j++)
+						{
+							YFunction.Add(answer[i][j]);
+							Table.Add(new ArgumentFunctionDerivative(answer[i][j].X, answer[i][j].Y, answer[i + 1][j].Y));
+						}
+					}
+					else if (i == 1)
+					{
+						for (int j = 0; j < answer[i].Count; j++)
+						{
+							VFunction.Add(answer[i][j]);
+						}
+					}
+				}
 				Status = "Данные выведены";
 			}
 			catch (Exception e)

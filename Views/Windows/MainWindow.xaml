@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:KantorLr14"
         xmlns:oxy="http://oxyplot.org/wpf"
         mc:Ignorable="d"
-        Title="{Binding Title}" Height="450" Width="800"
+        Title="{Binding Title}" Height="562" Width="800"
         DataContext="{Binding MainWindowModel, Source={StaticResource Locator}}">
     <Window.Resources>
         <Style TargetType="DataGrid">
@@ -79,6 +79,10 @@
                         <TextBlock Text="До" Margin="10,0"/>
                         <TextBox Margin="5,0" Width="75" Text="{Binding Right, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Center">
+                        <TextBlock Text="Число шагов"/>
+                        <TextBox Width="100" Margin="5,0" Text="{Binding StepsCount, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="5">
                         <TextBlock Text="{Binding YTextBlock}"/>
                         <TextBox Width="100" Text="{Binding Y, UpdateSourceTrigger=PropertyChanged}"/>
@@ -86,6 +90,13 @@
                     <StackPanel Orientation="Horizontal" Margin="5">
                         <TextBlock Text="{Binding DyTextBlock}"/>
                         <TextBox Width="100" Text="{Binding Dy, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBox Width="70" Text="{Binding MinDyFromLeftTextBlock}"/>
+                        <TextBlock Text="≤"/>
+                        <TextBlock Text="{Binding DyFromLeftTextBlock, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Text="≤"/>
+                        <TextBox Width="70" Text="{Binding MaxDyFromLeftTextBlock, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="5">
                         <TextBlock Text="Точность = "/>
