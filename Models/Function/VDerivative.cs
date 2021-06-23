@@ -23,8 +23,7 @@ namespace KantorLr14.Models.Function
 
 		public double Calculate(double x, Vector derivativeArgs)
 		{
-			double result = (_beta * derivativeArgs[0] * derivativeArgs[0] * derivativeArgs[0] * derivativeArgs[0]) / ((1 - x) * Math.Tan(_alpha) + _teta);
-			result -= (1 / (x + _ro) - Math.Tan(_alpha) / ((1 - x) * Math.Tan(_alpha) + _teta)) * derivativeArgs[1];
+			double result = _beta * Math.Pow(derivativeArgs[0], 4) / ((1 - x) * Math.Tan(_alpha * Math.PI / 180) + _teta) - (1 / (x + _ro) - Math.Tan(_alpha * Math.PI / 180) / ((1 - x) * Math.Tan(_alpha * Math.PI / 180) + _teta)) * derivativeArgs[1];
 			return result;
 		}
 	}

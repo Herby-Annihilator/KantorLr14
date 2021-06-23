@@ -147,7 +147,7 @@ namespace KantorLr14.ViewModels
 						rightDy = midDy;
 					else
 						leftDy = midDy;
-					midDy = (leftDy + rightDy) / 2;
+					midDy = (rightDy + leftDy) / 2;
 
 					functionsStartConditions[0] = y;
 					functionsStartConditions[1] = leftDy;
@@ -160,6 +160,8 @@ namespace KantorLr14.ViewModels
 					functionsStartConditions[0] = y;
 					functionsStartConditions[1] = midDy;
 					functionsPointsMiddle = rungeKuttaMethod.GetSystemSolution(f, leftR, rightR, functionsStartConditions, stepsCount);
+					if (Math.Abs(rightDy - leftDy) < double.Epsilon)
+						throw new Exception($"На отрезке [{minDy};{maxDy}] решений нет");
 				}
 				answer = functionsPointsMiddle;
 				Status = "Успешный расчет";
@@ -169,7 +171,7 @@ namespace KantorLr14.ViewModels
 				Status = $"Неудача, причина: {e.Message}";
 			}
 		}
-		private bool CanCalculateCommandExecute(object p) => !(string.IsNullOrWhiteSpace(Left) || string.IsNullOrWhiteSpace(Right) || string.IsNullOrWhiteSpace(Alpha) || string.IsNullOrWhiteSpace(Beta) || string.IsNullOrWhiteSpace(Ro) || string.IsNullOrWhiteSpace(Teta) || string.IsNullOrWhiteSpace(Y) || string.IsNullOrWhiteSpace(Dy) || string.IsNullOrWhiteSpace(MinDyFromLeftTextBlock) || string.IsNullOrWhiteSpace(MaxDyFromLeftTextBlock));
+		private bool CanCalculateCommandExecute(object p) => !(string.IsNullOrWhiteSpace(Left) || string.IsNullOrWhiteSpace(Right) || string.IsNullOrWhiteSpace(Alpha) || string.IsNullOrWhiteSpace(Beta) || string.IsNullOrWhiteSpace(Ro) || string.IsNullOrWhiteSpace(Teta) || string.IsNullOrWhiteSpace(Y) || string.IsNullOrWhiteSpace(Dy) || string.IsNullOrWhiteSpace(MinDyFromLeftTextBlock) || string.IsNullOrWhiteSpace(MaxDyFromLeftTextBlock) || string.IsNullOrWhiteSpace(Precision));
 		#endregion
 
 		#region ShowCommand
@@ -178,6 +180,9 @@ namespace KantorLr14.ViewModels
 		{
 			try
 			{
+				Table.Clear();
+				YFunction.Clear();
+				VFunction.Clear();
 				for (int i = 0; i < answer.Length; i++)
 				{
 					if (i == 0)

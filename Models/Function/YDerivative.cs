@@ -10,7 +10,7 @@ namespace KantorLr14.Models.Function
 	{
 		public double Calculate(double x, Vector derivativeArgs)
 		{
-			return derivativeArgs[0];
+			return derivativeArgs[1];
 		}
 	}
 }
